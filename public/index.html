@@ -14,7 +14,16 @@
   <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
   <meta name="content" description="StormFront Weather PWA" >
   <meta name="theme-color" content="#2da26d">
-
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+        .then(res => {
+          console.log('Service worker registered!', res);
+        });
+      });
+    }
+  </script>
 </head>
 <body>
 
