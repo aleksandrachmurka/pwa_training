@@ -145,8 +145,23 @@ function getForecastFromNetwork(coords) {
  * @return {Object} The weather forecast, if the request fails, return null.
  */
 function getForecastFromCache(coords) {
-  
+  if (!('caches' in window)) {
+    return null;
+  }
 
+  const url = `${window.location.origin}/forecast/${coords}`;
+
+  return caches.match(url)
+  .then(response => {
+    if(response) {
+      return response.json();
+    }
+    return null;
+  })
+  .catch(err => {
+    console.log('Error fetching data', err);
+    return null;
+  })
 }
 
 /**
@@ -180,8 +195,12 @@ function updateData() {
   Object.keys(weatherApp.selectedLocations).forEach((key) => {
     const location = weatherApp.selectedLocations[key];
     const card = getForecastCard(location);
-    
 
+    getForecastFromCache(location.geo)
+    .then(forecast => {
+      renderForecast(cars, forecast);
+    });
+    
     // Get the forecast data from the network.
     getForecastFromNetwork(location.geo)
         .then((forecast) => {
